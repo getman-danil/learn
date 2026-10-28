@@ -93,6 +93,7 @@
       catalog = [];
     }
     render();
+    L.saveForOffline(catalog.map(i => i.id));
   }
 
   $("#search").addEventListener("input", e => { query = e.target.value.trim().toLowerCase(); render(); });
@@ -113,6 +114,7 @@
   $("#sendRequest").addEventListener("click", () => {
     const topic = $("#topic").value.trim().replace(/\s+/g, " ");
     if (!topic) { L.toast("Сначала напиши тему"); $("#topic").focus(); return; }
+    if (!navigator.onLine) { L.toast("Нет интернета. Заявку можно отправить, когда появится сеть"); return; }
     const title = "Хочу изучить: " + topic.slice(0, 200);
     const body = `Тема: ${topic}\nГлубина: ${depth}`;
     const url = `https://github.com/${L.CONFIG.repo}/issues/new?` +

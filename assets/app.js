@@ -170,8 +170,20 @@
     return r.json();
   }
 
+  /* Офлайн-режим */
+  if ("serviceWorker" in navigator && window.isSecureContext) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+  // Сохраняет все уроки из каталога для чтения без интернета.
+  function saveForOffline(ids) {
+    if (!("serviceWorker" in navigator) || !navigator.onLine) return;
+    navigator.serviceWorker.ready.then(() => {
+      ids.forEach(id => fetch("lessons/" + id + ".json", { cache: "no-cache" }).catch(() => {}));
+    });
+  }
+
   window.Learn = {
     CONFIG, state, lesson, updateLesson, statusOf, markOpened, markDone, markProgress, isDue, markReviewed, togglePin,
-    md, inline, esc, fmtDate, readerPanel, toast, shuffle, fetchJSON
+    md, inline, esc, fmtDate, readerPanel, toast, shuffle, fetchJSON, saveForOffline
   };
 })();
